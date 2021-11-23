@@ -126,6 +126,41 @@
           },
         },
       ],
+      [
+        {
+          forwardStartTime: 1000,
+          forwardEndTime: 4000,
+          backwardStartTime: 0,
+          backwardEndTime: 2000,
+          endOpacity: 0,
+          startOpacity: 1,
+          endY: 200,
+          startY: 100,
+          element: document.querySelector('#panel1'),
+          step: (
+            isForward,
+            progress,
+            { element, startOpacity, endOpacity, startY, endY }
+          ) => {
+            if (isForward) {
+              // fade in, scroll up
+              // const opacity = startOpacity + (progress * (endOpacity - startOpacity))
+              const opacity =
+                startOpacity + progress * (endOpacity - startOpacity);
+              const bottom = startY + progress * (endY - startY);
+              element.style.opacity = `${opacity}`;
+              element.style.bottom = `${bottom}px`;
+            } else {
+              // fade out, scroll down
+              const opacity =
+                endOpacity - progress * (endOpacity - startOpacity);
+              const bottom = endY - progress * (endY - startY);
+              element.style.opacity = `${opacity}`;
+              element.style.bottom = `${bottom}px`;
+            }
+          },
+        },
+      ],
     ],
     curstage: 0,
     cursubstage: 'start',
