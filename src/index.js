@@ -9,7 +9,7 @@
           backwardEndTime: 4000,
           endWidth: 50,
           startWidth: 100,
-          element: document.querySelector("#circleId"),
+          element: document.querySelector('#circleId'),
           step: (isForward, progress, { element, endWidth, startWidth }) => {
             if (isForward) {
               // larger to smaller
@@ -33,7 +33,75 @@
           startOpacity: 0,
           endY: 100,
           startY: 0,
-          element: document.querySelector("#panel0"),
+          element: document.querySelector('#panel0'),
+          step: (
+            isForward,
+            progress,
+            { element, startOpacity, endOpacity, startY, endY }
+          ) => {
+            if (isForward) {
+              // fade in, scroll up
+              // const opacity = startOpacity + (progress * (endOpacity - startOpacity))
+              const opacity =
+                startOpacity + progress * (endOpacity - startOpacity);
+              const bottom = startY + progress * (endY - startY);
+              element.style.opacity = `${opacity}`;
+              element.style.bottom = `${bottom}px`;
+            } else {
+              // fade out, scroll down
+              const opacity =
+                endOpacity - progress * (endOpacity - startOpacity);
+              const bottom = endY - progress * (endY - startY);
+              element.style.opacity = `${opacity}`;
+              element.style.bottom = `${bottom}px`;
+            }
+          },
+        },
+      ],
+      [
+        {
+          forwardStartTime: 1000,
+          forwardEndTime: 4000,
+          backwardStartTime: 0,
+          backwardEndTime: 2000,
+          endOpacity: 0,
+          startOpacity: 1,
+          endY: 200,
+          startY: 100,
+          element: document.querySelector('#panel0'),
+          step: (
+            isForward,
+            progress,
+            { element, startOpacity, endOpacity, startY, endY }
+          ) => {
+            if (isForward) {
+              // fade in, scroll up
+              // const opacity = startOpacity + (progress * (endOpacity - startOpacity))
+              const opacity =
+                startOpacity + progress * (endOpacity - startOpacity);
+              const bottom = startY + progress * (endY - startY);
+              element.style.opacity = `${opacity}`;
+              element.style.bottom = `${bottom}px`;
+            } else {
+              // fade out, scroll down
+              const opacity =
+                endOpacity - progress * (endOpacity - startOpacity);
+              const bottom = endY - progress * (endY - startY);
+              element.style.opacity = `${opacity}`;
+              element.style.bottom = `${bottom}px`;
+            }
+          },
+        },
+        {
+          forwardStartTime: 1000,
+          forwardEndTime: 4000,
+          backwardStartTime: 0,
+          backwardEndTime: 2000,
+          endOpacity: 1,
+          startOpacity: 0,
+          endY: 100,
+          startY: 0,
+          element: document.querySelector('#panel1'),
           step: (
             isForward,
             progress,
@@ -60,8 +128,8 @@
       ],
     ],
     curstage: 0,
-    cursubstage: "start",
-    curdirection: "forward",
+    cursubstage: 'start',
+    // curdirection: "forward",
     totalTime: 4000,
   }));
 })();
@@ -82,9 +150,9 @@ function runAnimation(isForward, immersiveAnimation) {
     );
     if (progress >= 1) {
       if (isForward) {
-        immersiveAnimation.cursubstage = "end";
+        immersiveAnimation.cursubstage = 'end';
       } else {
-        immersiveAnimation.cursubstage = "start";
+        immersiveAnimation.cursubstage = 'start';
       }
       return;
     }
@@ -94,23 +162,27 @@ function runAnimation(isForward, immersiveAnimation) {
   window.requestAnimationFrame(step);
 }
 
-window.addEventListener("keypress", (event) => {
-  console.log("keypressing listening");
-  if (event.key === "k") {
+window.addEventListener('keypress', (event) => {
+  console.log('keypressing listening');
+  if (event.key === 'k') {
     // forward
-    if (
-      immersiveAnimation.cursubstage === "end" &&
-      immersiveAnimation.curstage === immersiveAnimation.entities.length - 1
-    )
-      return;
+    if (immersiveAnimation.cursubstage === 'end') {
+      if (
+        immersiveAnimation.curstage ===
+        immersiveAnimation.entities.length - 1
+      )
+        return;
+      immersiveAnimation.curstage++;
+      immersiveAnimation.cursubstage = 'start';
+    }
     runAnimation(true, immersiveAnimation);
-  } else if (event.key === "j") {
+  } else if (event.key === 'j') {
     // backward
-    if (
-        immersiveAnimation.cursubstage === "start" &&
-        immersiveAnimation.curstage === 0
-    )
-      return;
+    if (immersiveAnimation.cursubstage === 'start') {
+      if (immersiveAnimation.curstage === 0) return;
+      immersiveAnimation.curstage--;
+      immersiveAnimation.cursubstage = 'end';
+    }
     runAnimation(false, immersiveAnimation);
   }
 });
