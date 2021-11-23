@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hello Animation</title>
+    <style>
+        section {
+            display: flex;
+            height: 200px;
+            position: relative;
+        }
+        #circleId {
+            margin: auto;
+            background-color: red;
+            display: inline-block;
+            border-radius: 50%;
+            width:100px;
+            height:100px;
+            line-height:25px;
+        }
+        #panel0 {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+<section>
+    <div id="circleId">
+    </div>
+    <div id="panel0"><h2>My header</h2></div>
+</section>
+<script type="text/javascript" src="src/index.js"></script>
+<!--<script type="text/javascript" src="dist/main.js"></script>-->
+</body>
+</html>
