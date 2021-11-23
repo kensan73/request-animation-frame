@@ -164,8 +164,9 @@
     ],
     curstage: 0,
     cursubstage: 'start',
-    // curdirection: "forward",
     totalTime: 4000,
+    isAnimating: null,
+    userSkips: null,
   }));
 })();
 
@@ -177,13 +178,25 @@ function runAnimation(isForward, immersiveAnimation) {
   const step = () => {
     const curTime = new Date().getTime();
     const timeElapsed = curTime - startTime;
-    const progress = timeElapsed / immersiveAnimation.totalTime;
+    let progress = timeElapsed / immersiveAnimation.totalTime;
+    if (immersiveAnimation.userSkips !== null) {
+      if (isForward) {
+        progress = 0;
+        if (immersiveAnimation.userSkips === 'forward') progress = 1;
+      } else {
+        // backward
+        progress = 0;
+        if (immersiveAnimation.userSkips === 'backward') progress = 1;
+      }
+    }
     immersiveAnimation.entities[immersiveAnimation.curstage].forEach(
       (entity) => {
         entity.step(isForward, progress, entity);
       }
     );
-    if (progress >= 1) {
+    if (progress >= 1 || immersiveAnimation.userSkips !== null) {
+      immersiveAnimation.userSkips = null;
+      immersiveAnimation.isAnimating = false;
       if (isForward) {
         immersiveAnimation.cursubstage = 'end';
       } else {
@@ -198,8 +211,11 @@ function runAnimation(isForward, immersiveAnimation) {
 }
 
 window.addEventListener('keypress', (event) => {
-  console.log('keypressing listening');
   if (event.key === 'k') {
+    if (immersiveAnimation.isAnimating) {
+      immersiveAnimation.userSkips = 'forward';
+      return;
+    }
     // forward
     if (immersiveAnimation.cursubstage === 'end') {
       if (
@@ -210,14 +226,20 @@ window.addEventListener('keypress', (event) => {
       immersiveAnimation.curstage++;
       immersiveAnimation.cursubstage = 'start';
     }
+    immersiveAnimation.isAnimating = true;
     runAnimation(true, immersiveAnimation);
   } else if (event.key === 'j') {
+    if (immersiveAnimation.isAnimating) {
+      immersiveAnimation.userSkips = 'backward';
+      return;
+    }
     // backward
     if (immersiveAnimation.cursubstage === 'start') {
       if (immersiveAnimation.curstage === 0) return;
       immersiveAnimation.curstage--;
       immersiveAnimation.cursubstage = 'end';
     }
+    immersiveAnimation.isAnimating = true;
     runAnimation(false, immersiveAnimation);
   }
 });
