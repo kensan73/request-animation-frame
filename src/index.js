@@ -60,6 +60,7 @@
       ],
     ],
     curstage: 0,
+    cursubstage: "start",
     curdirection: "forward",
     totalTime: 4000,
   }));
@@ -76,31 +77,15 @@ function runAnimation(isForward, immersiveAnimation) {
     const progress = timeElapsed / immersiveAnimation.totalTime;
     immersiveAnimation.entities[immersiveAnimation.curstage].forEach(
       (entity) => {
-        // if (
-        //   isForward &&
-        //   (entity.forwardStartTime > timeElapsed ||
-        //     entity.forwardEndTime < timeElapsed)
-        // )
-        //   return;
-        // else if (
-        //   !isForward &&
-        //   (entity.backwardStartTime > timeElapsed ||
-        //     entity.backwardEndTime < timeElapsed)
-        // )
-        //   return;
-        const entityProgress =
-          progress * timeElapsed /
-          (isForward
-            ? entity.forwardEndTime - entity.forwardStartTime
-            : entity.backwardEndTime - entity.backwardStartTime);
         entity.step(isForward, progress, entity);
-        // entity.step(isForward, entityProgress, entity);
       }
     );
     if (progress >= 1) {
-      immersiveAnimation.curstage = isForward
-        ? immersiveAnimation.curstage++
-        : immersiveAnimation.curstage--;
+      if (isForward) {
+        immersiveAnimation.cursubstage = "end";
+      } else {
+        immersiveAnimation.cursubstage = "start";
+      }
       return;
     }
     requestAnimationFrame(step);
@@ -113,11 +98,19 @@ window.addEventListener("keypress", (event) => {
   console.log("keypressing listening");
   if (event.key === "k") {
     // forward
-    // if(immersiveAnimation.curstage === immersiveAnimation.entities.length) return
+    if (
+      immersiveAnimation.cursubstage === "end" &&
+      immersiveAnimation.curstage === immersiveAnimation.entities.length - 1
+    )
+      return;
     runAnimation(true, immersiveAnimation);
   } else if (event.key === "j") {
     // backward
-    // if(immersiveAnimation.curstage === 0) return
+    if (
+        immersiveAnimation.cursubstage === "start" &&
+        immersiveAnimation.curstage === 0
+    )
+      return;
     runAnimation(false, immersiveAnimation);
   }
 });
